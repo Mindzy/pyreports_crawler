@@ -57,8 +57,8 @@ Python 2.7
 
 - [x] ~~Processing in directory.~~
 - [x] ~~Clean some special Chinese marks from result.~~
-- [ ] Raise ERROR if there is nothing in training and report directory.
-- [ ] Update keywords dictionary if training set is changed.
+- [x] ~~Raise ERROR if there is nothing in training and report directory.~~
+- [x] ~~Update keywords dictionary if training set is changed.~~
 - [ ] Classify analytic reports and annual reports by sectors.
 - [ ] Exclude redundant text from result.
    - [ ] Improve comparison conditions in LTTextBox (determine_obj_text()).
