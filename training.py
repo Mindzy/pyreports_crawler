@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import re
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
@@ -51,52 +52,23 @@ def text_process(fn, layouts):
         # clean text and split by full stop
         # sentence_list stores all sentences in the file
         sentence_list += context_cleaning(''.join(page_text)).split('\xe3\x80\x82')
-    keyword_dict = {}
+    keywords = []
     if fn.__name__ == "jieba_text_rank":
-        keyword_dict = fn('\n'.join(sentence_list))
+        keywords = fn('\n'.join(sentence_list))
     elif fn.__name__ == "jieba_text":
-        keyword_dict = fn(sentence_list)
-    return keyword_dict
-
-
-def get_keyword_dict(keyword_dict_file):
-    keyword_dict = {}
-    try:
-        fpr = open(keyword_dict_file, 'rb')
-        ks = fpr.read().strip()
-        key_val = ks.split("\r\n")
-        for kv in key_val:
-            k, v = kv.split(' ')
-            keyword_dict[k] = float(v)
-    except IOError:
-        pass
-    return keyword_dict
-
-
-def keywords_to_dict(keywords, keyword_dict):
-    # keywords recieves the (word, count) tuple
-    if keywords is None:
-        return
-    for w, c in keywords:
-        if w in keyword_dict:
-            keyword_dict[w] += c
-        else:
-            keyword_dict[w] = c
-    fpw = open("keyword_dict.txt", 'w')
-    for k in keyword_dict:
-        fpw.write(k.encode("utf-8") + ' ' + str(keyword_dict[k]) + "\n")
-    fpw.close()
-    print("keyword_dict.txt saved")
-    return keyword_dict
+        keywords = fn(sentence_list)
+    return keywords
 
 
 def jieba_text_rank(sentences):
     # use TextRank to get topK keywords in file
     tr = jieba.analyse.textrank(
         sentences, topK=50, withWeight=True, allowPOS=('n'))
+    # return list of tuples
     return tr
 
 
+# edit needed
 def jieba_text(sentence_list):
     jieba_sentence_list = []
     for sentence in sentence_list:
@@ -157,29 +129,79 @@ def context_cleaning(context):
     return context
 
 
-def main(dir_path, fn, pages_num):
+def get_keyword_dict(keyword_dict, keyword_dict_file):
+    try:
+        fpr = open(keyword_dict_file, 'rb')
+        ks = fpr.read().strip()
+        key_val = ks.split(b"\r\n")
+        for kv in key_val:
+            k, v = kv.split(b' ')
+            if k in keyword_dict.keys():
+                keyword_dict[k] += float(v)
+            else:
+                keyword_dict[k] = float(v)
+    except IOError:
+        pass
+    return keyword_dict
+
+
+def keyword_files_to_dict(keywords_dir):
     keyword_dict = {}
-    trained = ''
+    # keywords receive the (word, count) tuple
+    dir_files = os.listdir(keywords_dir)
+    for keywords_file in dir_files:
+        keyword_dict = get_keyword_dict(keyword_dict, keywords_dir + '/' + keywords_file)
+    write_file_keywords(keyword_dict.items(), "keyword_dict.txt")
+
+
+def write_file_keywords(keywords, file_name):
+    fpw = open(file_name, 'w')
+    for k, v in keywords:
+        fpw.write(k + ' ' + str(v) + "\n")
+    fpw.close()
+
+
+def main(training_path, keyword_path, fn, pages_num):
+    sys_encode = sys.getfilesystemencoding()
+    training_dir_files = os.listdir(training_path)
+    keyword_dir_files = os.listdir(keyword_path)
+    if len(training_dir_files) == 0:
+        for dict_file in keyword_dir_files:
+            os.remove(keyword_path + '/' + dict_file)
+        print("No training files exist!")
+        return
     try:
         fpr = open("training_filename.txt", 'rb')
         trained = fpr.read().strip()
-        trained_files = trained.split("\r\n")
+        trained_files = trained.split(b"\r\n")
         fpr.close()
     except IOError:
         trained_files = []
-    dir_files = os.listdir(dir_path)
-    fpw = open("training_filename.txt", 'w')
-    if len(trained_files) != 0:
-        fpw.write(trained + "\n")
-    for pdf_file in dir_files:
+    # if there are files have been deleted in training directory
+    # remove corresponding keyword_dict file in keyword directory
+    if len(trained_files) != 0 and len(trained_files[0]) != 0:
+        # condition needs to be edited
+        for trained_file in trained_files:
+            if trained_file not in training_dir_files:
+                keyword_dict_file = keyword_path + '/' + trained_file + ".txt"
+                os.remove(keyword_dict_file)
+    for pdf_file in training_dir_files:
         if pdf_file not in trained_files:
-            fpw.write(pdf_file + "\n")
-            file_path = dir_path + '/' + pdf_file
+            file_path = training_path + '/' + pdf_file
             layouts = layouts_pdf_mining(file_path, pages_num)
             keywords = text_process(fn, layouts)
-            keyword_dict = keywords_to_dict(keywords, keyword_dict)
+            write_file_keywords(keywords, keyword_path + '/' + pdf_file + ".txt")
+    keyword_files_to_dict(keyword_path)
+    # write trained files
+    trained_files = os.listdir(training_path)
+    fpw = open("training_filename.txt", 'w')
+    for trained_file in trained_files:
+        fpw.write(trained_file + "\n")
+    fpw.close()
+    return
 
 
 if __name__ == "__main__":
-    path = "./training"
-    main(path, jieba_text_rank, 1)
+    training = "./training"
+    keyword = "./keywords"
+    main(training, keyword, jieba_text_rank, 1)

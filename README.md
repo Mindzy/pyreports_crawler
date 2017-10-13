@@ -1,5 +1,8 @@
 # pyreports_crawler
 
+## 版本
+v0.2
+
 ## 运行环境
 
 Python 2.7
@@ -17,7 +20,8 @@ Python 2.7
 
 - [x] ~~文件夹导入~~
 - [x] ~~从结果里去除特殊标点~~
-- [ ] 如果训练集变动,对关键词词典进行更新
+- [x] ~~训练集文件夹和年报文件夹内无文件时报错~~
+- [x] ~~如果训练集变动,对关键词词典进行更新~~
 - [ ] 按行业分类将分析报告和年报分类
 - [ ] 从结果中排除冗余文字
    - [ ] 改进LTTextBox的比较条件
@@ -27,11 +31,13 @@ Python 2.7
 - [ ] 排除页眉页脚
 - [ ] 提取图片
 - [ ] 修改为面向对象性编程
-- [ ] 训练自定义jieba分词词典
-   - [ ] 为自定义jieba词典的新单词标注词性
+- [ ] *训练自定义jieba分词词典*
+   - [ ] *为自定义jieba词典的新单词标注词性*
 - [ ] 从正文提取关键词和对应数据并导入数据库
-- [ ] 使用 [Tesseract](https://github.com/tesseract-ocr/tesseract) 或者 [ABBYY FineReader Engine](https://www.abbyy.com/en-us/ocr-sdk-windows/)进行OCR
+- [ ] *使用 [Tesseract](https://github.com/tesseract-ocr/tesseract) 或者 [ABBYY FineReader Engine](https://www.abbyy.com/en-us/ocr-sdk-windows/)进行OCR*
 
+## Version
+v0.2
 
 ## Requirements
 
@@ -51,8 +57,9 @@ Python 2.7
 
 - [x] ~~Processing in directory.~~
 - [x] ~~Clean some special Chinese marks from result.~~
+- [ ] Raise ERROR if there is nothing in training and report directory.
 - [ ] Update keywords dictionary if training set is changed.
-- [ ] Classify analytic reports and annual repors by sectors.
+- [ ] Classify analytic reports and annual reports by sectors.
 - [ ] Exclude redundant text from result.
    - [ ] Improve comparison conditions in LTTextBox (determine_obj_text()).
    - [ ] *Create exclusion list for redundant keywords.*
@@ -61,7 +68,7 @@ Python 2.7
 - [ ] Page header and page footer excludes.
 - [ ] Image Extraction.
 - [ ] OOP.
-- [ ] Train a custom jieba dictionary for text segmentation.
-   - [ ] Mark POS to new words in the custom jieba dictionary.
+- [ ] *Train a custom jieba dictionary for text segmentation.*
+   - [ ] *Add POS to new words in the custom jieba dictionary.*
 - [ ] Extract keywords and data from context and import to database.
-- [ ] OCR by using [Tesseract](https://github.com/tesseract-ocr/tesseract) or [ABBYY FineReader Engine](https://www.abbyy.com/en-us/ocr-sdk-windows/).
+- [ ] *OCR by using [Tesseract](https://github.com/tesseract-ocr/tesseract) or [ABBYY FineReader Engine](https://www.abbyy.com/en-us/ocr-sdk-windows/).*

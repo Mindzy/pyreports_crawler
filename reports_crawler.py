@@ -1,6 +1,5 @@
 import os
 import re
-import jieba
 from training import layouts_pdf_mining, layout_text_extract, get_keyword_dict, context_cleaning
 
 
@@ -17,7 +16,7 @@ def report_text_process(layouts, keyword_dict):
         ss = sentence_compare(s, keyword_dict)
         if ss:
             rs.append((s, ss))
-    rss = sorted(rs, key=lambda (k, v): (v, k))
+    rss = sorted(rs, key=lambda item: (item[1], item[0]))
     return rss
 
 
@@ -35,12 +34,12 @@ def main(dir_path, pages_num, pdf_pwd):
     try:
         fpr_filename = open("annual_report_filename.txt", "rb")
         r = fpr_filename.read().strip()
-        reports_list = r.split("\r\n")
+        reports_list = r.split(b"\r\n")
         fpr_filename.close()
     except IOError:
         reports_list = []
     fpw_filename = open("annual_report_filename.txt", 'w')
-    keyword_dict = get_keyword_dict("keyword_dict.txt")
+    keyword_dict = get_keyword_dict({}, "keyword_dict.txt")
     dir_files = os.listdir(dir_path)
     for pdf_file in dir_files:
         if pdf_file not in reports_list:
