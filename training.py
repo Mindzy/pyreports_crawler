@@ -132,7 +132,7 @@ def context_cleaning(context):
 def get_keyword_dict(keyword_dict, keyword_dict_file):
     try:
         fpr = open(keyword_dict_file, 'rb')
-        ks = fpr.read().strip()
+        ks = fpr.read().strip().encode("utf-8")
         key_val = ks.split(b"\r\n")
         for kv in key_val:
             k, v = kv.split(b' ')
@@ -157,7 +157,7 @@ def keyword_files_to_dict(keywords_dir):
 def write_file_keywords(keywords, file_name):
     fpw = open(file_name, 'w')
     for k, v in keywords:
-        fpw.write(k + ' ' + str(v) + "\n")
+        fpw.write(k.encode("utf-8") + ' ' + str(v) + "\n")
     fpw.close()
 
 

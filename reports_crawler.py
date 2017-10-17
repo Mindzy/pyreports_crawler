@@ -49,7 +49,7 @@ def main(dir_path, pages_num, pdf_pwd):
             result_sentence_sorted = report_text_process(layouts, keyword_dict)
             fpw = open(pdf_file + ".txt", 'w')
             for k, v in result_sentence_sorted:
-                fpw.write(str(v) + '|' + k + "\n")
+                fpw.write(str(v) + '\t' + k + "\n")
             fpw.close()
 
 
