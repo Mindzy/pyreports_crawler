@@ -132,7 +132,7 @@ def context_cleaning(context):
 def get_keyword_dict(keyword_dict, keyword_dict_file):
     try:
         fpr = open(keyword_dict_file, 'rb')
-        ks = fpr.read().strip().encode("utf-8")
+        ks = fpr.read().strip().decode("utf-8")
         key_val = ks.split(b"\r\n")
         for kv in key_val:
             k, v = kv.split(b' ')
@@ -162,7 +162,6 @@ def write_file_keywords(keywords, file_name):
 
 
 def main(training_path, keyword_path, fn, pages_num):
-    sys_encode = sys.getfilesystemencoding()
     training_dir_files = os.listdir(training_path)
     keyword_dir_files = os.listdir(keyword_path)
     if len(training_dir_files) == 0:

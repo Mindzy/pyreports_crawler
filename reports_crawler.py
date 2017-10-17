@@ -24,7 +24,7 @@ def sentence_compare(sentence, keyword_dict):
     # sentence score: ss
     ss = float()
     for k in keyword_dict.keys():
-        if k in sentence:
+        if k.encode("utf-8") in sentence:
             # sentence score is summed by keywords' weight
             ss += float(keyword_dict[k])
     return ss
