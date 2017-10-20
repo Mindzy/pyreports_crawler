@@ -12,6 +12,7 @@ Python 2.7
 [jieba](https://github.com/fxsjy/jieba)
 
 ## 功能
+
 - 从研报和年报获取正文
 - 利用TextRank算法从研报中提取带有权重的关键词
 - 用研报关键词提取年报关键句子并标权重
@@ -35,6 +36,13 @@ Python 2.7
    - [ ] *为自定义jieba词典的新单词标注词性*
 - [ ] 从正文提取关键词和对应数据并导入数据库
 - [ ] *使用 [Tesseract](https://github.com/tesseract-ocr/tesseract) 或者 [ABBYY FineReader Engine](https://www.abbyy.com/en-us/ocr-sdk-windows/)进行OCR*
+
+## 其他需求
+
+- [ ] 从年报里提取关键词
+   - [ ] TextRank权重
+   - [ ] 词频
+- [ ] 优先提取“董事会报告”或“经营情况讨论分析”
 
 ## Version
 v0.2
@@ -72,3 +80,10 @@ Python 2.7
    - [ ] *Add POS to new words in the custom jieba dictionary.*
 - [ ] Extract keywords and data from context and import to database.
 - [ ] *OCR by using [Tesseract](https://github.com/tesseract-ocr/tesseract) or [ABBYY FineReader Engine](https://www.abbyy.com/en-us/ocr-sdk-windows/).*
+
+## Other Requests
+
+- [ ] Extract keywords from annaul report
+  - [ ] TextRank weight
+  - [ ] Word count
+- [ ] Extract 'Directors' Report' or 'Business Conditions Analysis' first.

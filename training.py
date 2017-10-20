@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 import re
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
@@ -12,7 +11,7 @@ import jieba
 import jieba.analyse
 
 
-def layouts_pdf_mining(pdf_file, pages_num=1, pdf_pwd='', *args):
+def layouts_pdf_mining(pdf_file, page_range, pdf_pwd='', *args):
     """Open the pdf document, and apply the function, returning the results"""
     try:
         fp = open(pdf_file, 'rb')
@@ -36,9 +35,11 @@ def layouts_pdf_mining(pdf_file, pages_num=1, pdf_pwd='', *args):
     # Use a list to store LTPage objects created from each page
     layouts = []
     page_objs = list(PDFPage.create_pages(pdf_doc))
-    if pages_num == 0:
-        pages_num = len(page_objs)
-    for page in page_objs[:pages_num]:
+    page_start = page_range[0]
+    page_end = page_range[-1]
+    if page_end == -1:
+        page_end = len(page_objs)
+    for page in page_objs[page_start: page_end]:
         pdf_interpreter.process_page(page)
         layouts.append(pdf_device.get_result())
     return layouts
@@ -55,7 +56,7 @@ def text_process(fn, layouts):
     keywords = []
     if fn.__name__ == "jieba_text_rank":
         keywords = fn('\n'.join(sentence_list))
-    elif fn.__name__ == "jieba_text":
+    elif fn.__name__ == "jieba_text_word_count_dict":
         keywords = fn(sentence_list)
     return keywords
 
@@ -63,21 +64,25 @@ def text_process(fn, layouts):
 def jieba_text_rank(sentences):
     # use TextRank to get topK keywords in file
     tr = jieba.analyse.textrank(
-        sentences, topK=50, withWeight=True, allowPOS=('n'))
+        sentences, topK=50, withWeight=True, allowPOS=('n', 'v'))
     # return list of tuples
     return tr
 
 
-# edit needed
-def jieba_text(sentence_list):
+def jieba_text_word_count_dict(sentence_list, words_dict):
+    wd = words_dict
     jieba_sentence_list = []
     for sentence in sentence_list:
         # determine whether sentence is needed
         if re_determine_sentence(sentence):
             # jieba.cut_for_search return keywords with duplicated characters
             jieba_sentence = list(jieba.cut_for_search(sentence))
-            jieba_sentence_list.append(jieba_sentence)
-    return jieba_sentence_list
+            for js_word in jieba_sentence:
+                try:
+                    wd[js_word] += 1
+                except KeyError:
+                    wd[js_word] = 1
+    return wd
 
 
 # improvement needed
@@ -161,7 +166,7 @@ def write_file_keywords(keywords, file_name):
     fpw.close()
 
 
-def main(training_path, keyword_path, fn, pages_num):
+def main(training_path, keyword_path, fn, page_range):
     training_dir_files = os.listdir(training_path)
     keyword_dir_files = os.listdir(keyword_path)
     if len(training_dir_files) == 0:
@@ -187,7 +192,7 @@ def main(training_path, keyword_path, fn, pages_num):
     for pdf_file in training_dir_files:
         if pdf_file not in trained_files:
             file_path = training_path + '/' + pdf_file
-            layouts = layouts_pdf_mining(file_path, pages_num)
+            layouts = layouts_pdf_mining(file_path, page_range)
             keywords = text_process(fn, layouts)
             write_file_keywords(keywords, keyword_path + '/' + pdf_file + ".txt")
     keyword_files_to_dict(keyword_path)
@@ -201,6 +206,9 @@ def main(training_path, keyword_path, fn, pages_num):
 
 
 if __name__ == "__main__":
+    annualreport = "./annualreport"
     training = "./training"
     keyword = "./keywords"
-    main(training, keyword, jieba_text_rank, 1)
+    annualreport_keywords = "./annualreport_keywords"
+    # training_keywords_dict(training, keyword, jieba_text_rank, [0, 1])
+    main(annualreport, annualreport_keywords, jieba_text_word_count_dict, )
