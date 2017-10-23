@@ -39,10 +39,10 @@ Python 2.7
 
 ## 其他需求
 
-- [ ] 从年报里提取关键词
+- [x] ~~从年报里提取关键词~~
    - [ ] TextRank权重
-   - [ ] 词频
-- [ ] 优先提取“董事会报告”或“经营情况讨论分析”
+   - [x] ~~词频~~
+- [x] ~~优先提取“董事会报告”或“经营情况讨论分析”~~
 
 ## Version
 v0.2
@@ -83,7 +83,7 @@ Python 2.7
 
 ## Other Requests
 
-- [ ] Extract keywords from annaul report
+- [x] ~~Extract keywords from annaul report~~
   - [ ] TextRank weight
-  - [ ] Word count
-- [ ] Extract 'Directors' Report' or 'Business Conditions Analysis' first.
+  - [x] ~~Word count~~
+- [x] ~~Extract 'Directors' Report' or 'Business Conditions Analysis' first.~~

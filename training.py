@@ -69,20 +69,22 @@ def jieba_text_rank(sentences):
     return tr
 
 
-def jieba_text_word_count_dict(sentence_list, words_dict):
-    wd = words_dict
-    jieba_sentence_list = []
+def jieba_text_word_count_dict(sentence_list):
+    wd = {}
+    accepted_chars = re.compile(u"[\u4E00-\u9FD5]+")
     for sentence in sentence_list:
         # determine whether sentence is needed
         if re_determine_sentence(sentence):
             # jieba.cut_for_search return keywords with duplicated characters
-            jieba_sentence = list(jieba.cut_for_search(sentence))
-            for js_word in jieba_sentence:
+            jieba_sentence_list = list(jieba.cut_for_search(sentence))
+            for js_word in jieba_sentence_list:
+                if accepted_chars.match(js_word) is None or len(js_word) <= 1:
+                    continue
                 try:
                     wd[js_word] += 1
                 except KeyError:
                     wd[js_word] = 1
-    return wd
+    return wd.items()
 
 
 # improvement needed
@@ -145,6 +147,8 @@ def get_keyword_dict(keyword_dict, keyword_dict_file):
                 keyword_dict[k] += float(v)
             else:
                 keyword_dict[k] = float(v)
+    except ValueError:
+        pass
     except IOError:
         pass
     return keyword_dict
@@ -206,9 +210,7 @@ def main(training_path, keyword_path, fn, page_range):
 
 
 if __name__ == "__main__":
-    annualreport = "./annualreport"
     training = "./training"
     keyword = "./keywords"
-    annualreport_keywords = "./annualreport_keywords"
-    # training_keywords_dict(training, keyword, jieba_text_rank, [0, 1])
-    main(annualreport, annualreport_keywords, jieba_text_word_count_dict, )
+    main(training, keyword, jieba_text_rank, [0, 1])
+    # main(annualreport, annualreport_keywords, jieba_text_word_count_dict, )
